@@ -16,4 +16,4 @@ docker exec pizza-kafka \
   --partitions "$PARTITIONS" \
   --replication-factor "$REPLICATION"
 
-echo "✅ Topic '$TOPIC' ready."
+echo "Topic '$TOPIC' ready."

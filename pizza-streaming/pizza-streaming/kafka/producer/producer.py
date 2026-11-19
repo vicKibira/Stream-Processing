@@ -27,12 +27,12 @@ def make_producer(retries: int = 10, backoff: int = 3) -> KafkaProducer:
                 acks="all",
                 retries=3,
             )
-            print(f"[producer] ✅  Connected to Kafka @ {KAFKA_BROKER}")
+            print(f"[producer]   Connected to Kafka @ {KAFKA_BROKER}")
             return p
         except NoBrokersAvailable:
-            print(f"[producer] ⏳  Attempt {attempt}/{retries} — broker not ready, retrying in {backoff}s...")
+            print(f"[producer]   Attempt {attempt}/{retries} — broker not ready, retrying in {backoff}s...")
             time.sleep(backoff)
-    print("[producer] ❌  Could not connect to Kafka. Exiting.")
+    print("[producer]   Could not connect to Kafka. Exiting.")
     sys.exit(1)
 
 def build_event(row: dict) -> dict:
@@ -53,10 +53,10 @@ def build_event(row: dict) -> dict:
     }
 
 def on_send_success(meta):
-    print(f"[producer] ✉️   topic={meta.topic}  partition={meta.partition}  offset={meta.offset}")
+    print(f"[producer]    topic={meta.topic}  partition={meta.partition}  offset={meta.offset}")
 
 def on_send_error(exc):
-    print(f"[producer] ❌  send error: {exc}")
+    print(f"[producer]   send error: {exc}")
 
 def main():
     producer = make_producer()
@@ -75,7 +75,7 @@ def main():
             total += 1
             if total % 100 == 0:
                 producer.flush()
-                print(f"[producer] 📦  {total} events sent so far...")
+                print(f"[producer]   {total} events sent so far...")
 
             time.sleep(DELAY_SECONDS)
 

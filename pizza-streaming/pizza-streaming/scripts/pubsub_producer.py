@@ -52,10 +52,10 @@ with open(CSV_PATH, newline="", encoding="utf-8") as fh:
             for f in futures:
                 f.result()
             futures = []
-            print(f"[pubsub-producer] 📦  {total} messages published...")
+            print(f"[pubsub-producer]   {total} messages published...")
         time.sleep(DELAY)
 
 for f in futures:
     f.result()
 
-print(f"[pubsub-producer] 🏁  Done. Total: {total}")
+print(f"[pubsub-producer]   Done. Total: {total}")

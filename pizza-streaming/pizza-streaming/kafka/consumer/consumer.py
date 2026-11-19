@@ -39,12 +39,12 @@ def make_consumer(retries: int = 10, backoff: int = 3) -> KafkaConsumer:
                 value_deserializer=lambda v: json.loads(v.decode("utf-8")),
                 consumer_timeout_ms=30000,
             )
-            print(f"[consumer] ✅  Connected to Kafka @ {KAFKA_BROKER}  |  group={GROUP_ID}")
+            print(f"[consumer]   Connected to Kafka @ {KAFKA_BROKER}  |  group={GROUP_ID}")
             return c
         except NoBrokersAvailable:
             print(f"[consumer] ⏳  Attempt {attempt}/{retries} — broker not ready, retrying in {backoff}s...")
             time.sleep(backoff)
-    print("[consumer] ❌  Could not connect to Kafka. Exiting.")
+    print("[consumer]   Could not connect to Kafka. Exiting.")
     sys.exit(1)
 
 def process(event: dict):
@@ -66,7 +66,7 @@ def process(event: dict):
 
 def print_summary():
     print("\n" + "═" * 60)
-    print(f"  📊  LIVE SUMMARY  |  orders={stats['total_orders']}  revenue=${stats['total_revenue']:,.2f}")
+    print(f"    LIVE SUMMARY  |  orders={stats['total_orders']}  revenue=${stats['total_revenue']:,.2f}")
     print("═" * 60)
 
     print("\n  By Category:")
@@ -85,7 +85,7 @@ def print_summary():
 
 def main():
     consumer = make_consumer()
-    print(f"[consumer] 👂  Listening on topic: {TOPIC} ...")
+    print(f"[consumer]  Listening on topic: {TOPIC} ...")
 
     try:
         for msg in consumer:
@@ -94,7 +94,7 @@ def main():
 
             # log every incoming event
             print(
-                f"[consumer] 🍕  order={event.get('order_id')}  "
+                f"[consumer]  order={event.get('order_id')}  "
                 f"{event.get('pizza_name')}  "
                 f"({event.get('pizza_size')})  "
                 f"${event.get('total_price'):.2f}  "
@@ -106,7 +106,7 @@ def main():
                 print_summary()
 
     except KeyboardInterrupt:
-        print("\n[consumer] 🛑  Interrupted by user.")
+        print("\n[consumer] Interrupted by user.")
     finally:
         print_summary()
         consumer.close()

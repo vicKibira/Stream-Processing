@@ -3,7 +3,7 @@ set -euo pipefail
 
 PROJECT_ROOT="pizza-streaming"
 
-echo "🍕 Scaffolding pizza-streaming project..."
+echo "Scaffolding pizza-streaming project..."
 
 # ─── Directory structure ───────────────────────────────────────────────
 mkdir -p $PROJECT_ROOT/{kafka/{producer,consumer},terraform,data,scripts}
@@ -97,12 +97,12 @@ def make_producer(retries: int = 10, backoff: int = 3) -> KafkaProducer:
                 acks="all",
                 retries=3,
             )
-            print(f"[producer] ✅  Connected to Kafka @ {KAFKA_BROKER}")
+            print(f"[producer]   Connected to Kafka @ {KAFKA_BROKER}")
             return p
         except NoBrokersAvailable:
-            print(f"[producer] ⏳  Attempt {attempt}/{retries} — broker not ready, retrying in {backoff}s...")
+            print(f"[producer]   Attempt {attempt}/{retries} — broker not ready, retrying in {backoff}s...")
             time.sleep(backoff)
-    print("[producer] ❌  Could not connect to Kafka. Exiting.")
+    print("[producer]  Could not connect to Kafka. Exiting.")
     sys.exit(1)
 
 def build_event(row: dict) -> dict:
@@ -123,10 +123,10 @@ def build_event(row: dict) -> dict:
     }
 
 def on_send_success(meta):
-    print(f"[producer] ✉️   topic={meta.topic}  partition={meta.partition}  offset={meta.offset}")
+    print(f"[producer]    topic={meta.topic}  partition={meta.partition}  offset={meta.offset}")
 
 def on_send_error(exc):
-    print(f"[producer] ❌  send error: {exc}")
+    print(f"[producer]   send error: {exc}")
 
 def main():
     producer = make_producer()
@@ -201,12 +201,12 @@ def make_consumer(retries: int = 10, backoff: int = 3) -> KafkaConsumer:
                 value_deserializer=lambda v: json.loads(v.decode("utf-8")),
                 consumer_timeout_ms=30000,
             )
-            print(f"[consumer] ✅  Connected to Kafka @ {KAFKA_BROKER}  |  group={GROUP_ID}")
+            print(f"[consumer]   Connected to Kafka @ {KAFKA_BROKER}  |  group={GROUP_ID}")
             return c
         except NoBrokersAvailable:
-            print(f"[consumer] ⏳  Attempt {attempt}/{retries} — broker not ready, retrying in {backoff}s...")
+            print(f"[consumer]   Attempt {attempt}/{retries} — broker not ready, retrying in {backoff}s...")
             time.sleep(backoff)
-    print("[consumer] ❌  Could not connect to Kafka. Exiting.")
+    print("[consumer]   Could not connect to Kafka. Exiting.")
     sys.exit(1)
 
 def process(event: dict):
@@ -228,7 +228,7 @@ def process(event: dict):
 
 def print_summary():
     print("\n" + "═" * 60)
-    print(f"  📊  LIVE SUMMARY  |  orders={stats['total_orders']}  revenue=${stats['total_revenue']:,.2f}")
+    print(f"    LIVE SUMMARY  |  orders={stats['total_orders']}  revenue=${stats['total_revenue']:,.2f}")
     print("═" * 60)
 
     print("\n  By Category:")
@@ -247,7 +247,7 @@ def print_summary():
 
 def main():
     consumer = make_consumer()
-    print(f"[consumer] 👂  Listening on topic: {TOPIC} ...")
+    print(f"[consumer]   Listening on topic: {TOPIC} ...")
 
     try:
         for msg in consumer:
@@ -256,7 +256,7 @@ def main():
 
             # log every incoming event
             print(
-                f"[consumer] 🍕  order={event.get('order_id')}  "
+                f"[consumer]   order={event.get('order_id')}  "
                 f"{event.get('pizza_name')}  "
                 f"({event.get('pizza_size')})  "
                 f"${event.get('total_price'):.2f}  "
@@ -268,11 +268,11 @@ def main():
                 print_summary()
 
     except KeyboardInterrupt:
-        print("\n[consumer] 🛑  Interrupted by user.")
+        print("\n[consumer]   Interrupted by user.")
     finally:
         print_summary()
         consumer.close()
-        print("[consumer] 🏁  Consumer closed.")
+        print("[consumer]   Consumer closed.")
 
 if __name__ == "__main__":
     main()
@@ -518,7 +518,7 @@ docker exec pizza-kafka \
   --partitions "$PARTITIONS" \
   --replication-factor "$REPLICATION"
 
-echo "✅ Topic '$TOPIC' ready."
+echo " Topic '$TOPIC' ready."
 EOF
 chmod +x $PROJECT_ROOT/scripts/create_topic.sh
 
@@ -580,13 +580,13 @@ with open(CSV_PATH, newline="", encoding="utf-8") as fh:
             for f in futures:
                 f.result()
             futures = []
-            print(f"[pubsub-producer] 📦  {total} messages published...")
+            print(f"[pubsub-producer]   {total} messages published...")
         time.sleep(DELAY)
 
 for f in futures:
     f.result()
 
-print(f"[pubsub-producer] 🏁  Done. Total: {total}")
+print(f"[pubsub-producer]   Done. Total: {total}")
 EOF
 
 # ══════════════════════════════════════════════════════════════════════
@@ -610,7 +610,7 @@ EOF
 # README.md
 # ══════════════════════════════════════════════════════════════════════
 cat > $PROJECT_ROOT/README.md << 'EOF'
-# 🍕 Pizza Sales Streaming Pipeline
+#  Pizza Sales Streaming Pipeline
 
 Kafka (local KRaft) + GCP (Pub/Sub → Dataflow → BigQuery)
 
@@ -774,7 +774,7 @@ terraform destroy -auto-approve
 EOF
 
 echo ""
-echo "✅  Project scaffolded at: ./$PROJECT_ROOT"
+echo " Project scaffolded at: ./$PROJECT_ROOT"
 echo ""
 tree $PROJECT_ROOT 2>/dev/null || find $PROJECT_ROOT -type f | sort
 
