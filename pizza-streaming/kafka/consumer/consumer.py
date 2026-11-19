@@ -11,7 +11,7 @@ import sys
 import time
 from collections import defaultdict
 from kafka import KafkaConsumer
-from kafka.errors import NoBrokersAvailable
+from kafka.errors import KafkaError
 
 KAFKA_BROKER    = os.getenv("KAFKA_BROKER",    "localhost:9092")
 TOPIC           = os.getenv("KAFKA_TOPIC",     "pizza_orders")
@@ -41,7 +41,7 @@ def make_consumer(retries: int = 10, backoff: int = 3) -> KafkaConsumer:
             )
             print(f"[consumer]   Connected to Kafka @ {KAFKA_BROKER}  |  group={GROUP_ID}")
             return c
-        except NoBrokersAvailable:
+        except KafkaError:
             print(f"[consumer] ⏳  Attempt {attempt}/{retries} — broker not ready, retrying in {backoff}s...")
             time.sleep(backoff)
     print("[consumer]   Could not connect to Kafka. Exiting.")

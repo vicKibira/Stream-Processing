@@ -10,7 +10,7 @@ import time
 import sys
 import os
 from kafka import KafkaProducer
-from kafka.errors import NoBrokersAvailable
+from kafka.errors import KafkaError
 
 KAFKA_BROKER  = os.getenv("KAFKA_BROKER", "localhost:9092")
 TOPIC         = os.getenv("KAFKA_TOPIC",  "pizza_orders")
@@ -29,7 +29,7 @@ def make_producer(retries: int = 10, backoff: int = 3) -> KafkaProducer:
             )
             print(f"[producer]   Connected to Kafka @ {KAFKA_BROKER}")
             return p
-        except NoBrokersAvailable:
+        except KafkaError:
             print(f"[producer]   Attempt {attempt}/{retries} — broker not ready, retrying in {backoff}s...")
             time.sleep(backoff)
     print("[producer]   Could not connect to Kafka. Exiting.")
