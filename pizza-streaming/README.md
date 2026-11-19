@@ -1,4 +1,4 @@
-# 🍕 Pizza Sales Streaming Pipeline
+# Pizza Sales Streaming Pipeline
 
 Kafka (local KRaft) + GCP (Pub/Sub → Dataflow → BigQuery)
 
